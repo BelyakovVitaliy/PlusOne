@@ -1,0 +1,94 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8"/>
+	<title>+1</title>
+	<link th:replace="htmlFragments::header">
+	<link rel="stylesheet" href="/css/registration.css"/>
+	<script src="/js/registration.js"></script>
+
+</head>
+<body>
+
+<div class="container">
+
+	<div class="form-registration" id="regForm">
+		<h2 class="form-registration-heading">Registration form</h2>
+		<div class="form-group">
+			<label for="firstName">First Name</label>
+			<input class="form-control" id="firstName" th:value="${user?.firstName}" placeholder="Иван"
+				   required="required" type="text"/>
+			<div class="invalid-feedback">This field can't be empty</div>
+		</div>
+		<div class="form-group">
+			<label for="lastName">Last Name</label>
+			<input class="form-control" id="lastName" th:value="${user?.lastName}" placeholder="Иванов" type="text"/>
+		</div>
+		<div class="form-group">
+			<label for="email">E-Mail</label>
+			<input class="form-control" id="email" th:value="${user?.email}" placeholder="example@google.com"
+				   required="required" type="text"/>
+			<div class="invalid-feedback">Check this field</div>
+		</div>
+		<button class="btn btn-md btn-info" id="changePassoword" onclick="showChangePasswordFields()" th:if=" ${user!=null}">Change Password
+		</button>
+		<div class="form-group" th:if=" ${user!=null}" hidden="hidden">
+			<label for="password-field-old" >Old password</label>
+			<input class="password-field form-control" id="password-field-old" type="password">
+			<div class="invalid-feedback">This field can't be empty</div>
+		</div>
+		<div class="form-group" th:hidden="${user!=null} ? 'hidden'">
+			<label for="password-field-first">New password</label>
+			<input class="password-field form-control" id="password-field-first" type="password">
+			<div class="invalid-feedback">This field can't be empty</div>
+		</div>
+		<div class="form-group" th:hidden="${user!=null} ? 'hidden'">
+			<label for="password-field-second">Repeat new password</label>
+			<input class="password-field form-control" id="password-field-second" type="password">
+			<div class="invalid-feedback">This field can't be empty</div>
+		</div>
+		<div hidden="hidden">
+			<span class="socialNetworkType" th:each="social:${socials}"
+				  th:attr="regexp = ${social.regExp},holder = ${social.placeHolder}" th:id="${social.name}"
+				  th:text="${social.name}"></span>
+		</div>
+		<div class="form-group" th:if="${#lists.size(socials)} != 0">
+			<label for="socialNetworks">Social networks</label>
+			<table class="table table-hover" id="socialNetworks">
+				<thead class="thead-inverse">
+				<tr>
+					<th abbr="link">Link</th>
+					<th abbr="socialNetworkType">Type</th>
+				</tr>
+				</thead>
+				<tbody id="SN-table-body">
+				<tr th:each="userSocial:${user?.socialNetworks}">
+					<td>
+						<input class="form-control sn-link" type="text" placeholder="1234567"
+							   th:value="${userSocial.link}"/>
+						<div class="invalid-feedback">Check this field</div>
+					</td>
+					<td>
+						<select th:value="${userSocial.socialNetworkType.name}"
+								class="form-control social-network-type">
+							<option class="socialNetworkTypes" th:each="social:${socials}"
+									th:text="${social.name}"
+									th:attr="userSocialType = ${userSocial.socialNetworkType.name}"></option>
+						</select>
+					</td>
+					<td>
+						<button type="button" th:onclick="'deleteSocial('+ this + ')'"
+								class="glyphicon glyphicon-remove"></button>
+					</td>
+				</tr>
+				</tbody>
+			</table>
+			<button class="btn btn-md btn-info" id="addNewSN" onclick="addNewSN()">Add Social Network</button>
+		</div>
+		<span id="errorText"></span>
+		<button class="btn btn-lg btn-primary btn-block" th:onclick="'register(\'' + ${targetAction} + '\')'">Submit
+		</button>
+	</div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,27 @@
+body {
+    align-items: center;
+    display: flex;
+}
+
+.form-registration {
+    max-width: 600px;
+    padding: 15px;
+    margin: auto;
+}
+
+#errorText {
+    color: red;
+}
+
+#errorText:empty {
+    display: none;
+}
+
+.glyphicon {
+    border: none;
+    background: none;
+}
+
+td {
+    border: none;
+}

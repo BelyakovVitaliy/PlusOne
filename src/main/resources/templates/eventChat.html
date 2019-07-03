@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+	<meta charset="UTF-8">
+	<link th:replace="htmlFragments::header">
+	<title>+1</title></head>
+<link rel="stylesheet" href="/css/eventChat.css"/>
+<script src="/js/eventChat.js"></script>
+<script src="http://cdn.jsdelivr.net/sockjs/1.0.3/sockjs.min.js"></script>
+<script src="/js/vendors/stomp.js"></script>
+<body>
+<nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+	<a class="navbar-brand col-sm-3 col-md-2 mr-0" id="lable" href="/mainBoard">PlusOne</a>
+	<div class="navbar-main col-md-9 ml-sm-auto col-lg-10 px-4">
+		<div class="row">
+			<div class="userName col-sm" id="user-name-label"
+				 th:text="${#authentication.getPrincipal().getFirstName() + ' ' + #authentication.getPrincipal().getLastName()}"
+				 th:value="${#authentication.getPrincipal().getEmail()}"></div>
+			<div class="navbar-centerText col-sm" id="eventName" th:value="${event.id}" th:text="${event.title}">Event
+				Name
+			</div>
+			<a class="navbar-link col-sm" href="/logout">Sign out</a>
+		</div>
+	</div>
+</nav>
+<div class="container-fluid">
+	<div class="messaging">
+		<div class="inbox_msg">
+			<div class="inbox_people">
+				<div class="headind_srch">
+					<div class="recent_heading">
+						<h4>Members</h4>
+					</div>
+					<div class="srch_bar">
+						<input type="text" class="search-bar" placeholder="Search">
+					</div>
+				</div>
+				<div class="chat_list">
+					<div class="chat_people">
+						<div class="chat_img">
+							<img src="https://ptetutorials.com/images/user-profile.png" alt="sunil">
+						</div>
+						<div class="chat_ib">
+							<h5 th:text="${event.ownerUser.firstName + ' ' + event.ownerUser.lastName}">Owner name</h5>
+							<span class="chat_date" th:text="${event.ownerUser.email}">Owner email</span>
+							<i class="glyphicon glyphicon-certificate" aria-hidden="true"></i>
+						</div>
+					</div>
+					<div class="chat_people" th:each="user : ${event.joinedUsers}">
+						<div class="chat_img">
+							<img src="https://ptetutorials.com/images/user-profile.png" alt="sunil">
+						</div>
+						<div class="chat_ib">
+							<h5 th:text="${user.getFirstName() + ' ' + user.getLastName()}">Example sender</h5>
+							<span class="chat_date" th:text="${user.email}">e-mail</span>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="mesgs">
+				<div class="msg_history" id="messageHistory">
+				</div>
+				<div class="type_msg">
+					<div class="input_msg_write">
+						<input type="text" class="write_msg" id="message-area" placeholder="Type a message"/>
+						<button class="msg_send_btn" id="sendMessage-btn" onclick="sendMessage()"><i
+								class="glyphicon glyphicon-ok-circle" aria-hidden="true"></i></button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</div>
+</body>
+</html>

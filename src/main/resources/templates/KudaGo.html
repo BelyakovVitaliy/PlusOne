@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+	<meta charset="UTF-8">
+	<link th:replace="htmlFragments::header">
+	<title>+1</title></head>
+<link rel="stylesheet" href="/css/style.css"/>
+<script src="/js/vendors/holder.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/css/vendors/tag-basic-style.css"/>
+<script type="text/javascript" src="/js/vendors/tagging.min.js"></script>
+<script type="text/javascript" src="http://stevenlevithan.com/assets/misc/date.format.js"></script>
+<link rel="stylesheet" href="/css/KudaGo.css"/>
+<link rel="stylesheet" type="text/css" href="/webjars/font-awesome/css/all.css"/>
+<script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
+<script src="/js/KudaGo.js"></script>
+<body>
+<nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+	<a class="navbar-brand col-sm-3 col-md-2 mr-0" id="lable" href="#">PlusOne</a>
+	<div class="navbar-main col-md-9 ml-sm-auto col-lg-10 px-4">
+		<div class="row">
+			<div class="userName col-sm" id="user-name-label"
+				 th:text="${#authentication.getPrincipal().getFirstName() + ' ' + #authentication.getPrincipal().getLastName()}"
+				 th:value="${#authentication.getPrincipal().getId()}"></div>
+			<div class="navbar-centerText col-sm">Enjoy your life</div>
+			<a class="navbar-link col-sm" href="/logout">Sign out</a>
+		</div>
+	</div>
+</nav>
+
+<div class="container-fluid">
+	<div class="row">
+		<link th:replace="htmlFragments::leftNavPanel">
+		<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+			<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+				<h1 id="pageTitle">Search events</h1>
+				<div class="btn-toolbar mb-2 mb-md-0">
+					<div class="btn-group mr-2">
+						<button class="btn btn-sm btn-outline-secondary" data-toggle="modal"
+								data-target="#searchEventModal">Search
+						</button>
+					</div>
+				</div>
+			</div>
+			<div class="album py-5 bg-light">
+				<div class="container">
+					<div class="row" id="eventsFromKudaGo">
+
+					</div>
+				</div>
+			</div>
+			<button type="button" onclick="getMore()" hidden="hidden" id="getMore-btn"
+					class="btn btn-outline-success btn-lg btn-block">
+				Get more
+				<i id="getMore-spinner" hidden="hidden" class="fa fa-spinner fa-spin"></i>
+			</button>
+		</main>
+	</div>
+</div>
+
+<div class="modal fade" id="searchEventModal">
+	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-body">
+				<div class="inner-text" id="searchEventForm">
+					<div class="form-group">
+						<label for="searchEventTitle">Title</label>
+						<input class="form-control" type="text" maxlength="50" name="title" id="searchEventTitle"/>
+						<div class="invalid-feedback">Title or destination have to be fulfilled</div>
+					</div>
+					<div class="form-row">
+						<div class="form-group col-md-10">
+							<label for="searchEventDestination">Destination</label>
+							<input type="text" class="form-control" maxlength="200" name='destination'
+								   id="searchEventDestination"/>
+							<div class="invalid-feedback">Title or destination have to be fulfilled</div>
+						</div>
+						<div class="form-group col-md-2">
+							<label for="search-dest-radius">Radius</label>
+							<div class="input-group mb-3">
+								<input type="text" class="form-control" placeholder="100" id="search-dest-radius"
+									   onkeyup="checkRadius()"><span>m</span>
+								<div class="input-group-append">
+									<button type="button" id="showMap-btn" class="btn btn-outline-secondary"><i
+											class="glyphicon glyphicon-globe" id="button"></i></button>
+								</div>
+							</div>
+						</div>
+						<p id="notice"></p>
+						<div id="search-map"></div>
+						<span hidden="hidden">
+							<span id="positionX"></span>
+							<span id="positionY"></span>
+						</span>
+					</div>
+					<div class="form-group">
+						<label for="searchEventStartDate">Start Date<span class="requirement">*</span></label>
+						<input type="datetime-local" class="form-control" name="startDate" max="2050-01-01T00:00"
+							   id="searchEventStartDate"/>
+						<div class="invalid-feedback">
+						</div>
+						<div class="form-group">
+							<label for="searchEventEndDate">End Date</label>
+							<input type="datetime-local" name='endDate' class="form-control" max="2050-01-01T00:00"
+								   id="searchEventEndDate"/>
+							<div class="invalid-feedback">
+							</div>
+						</div>
+						<!--<div class="form-group">
+							<label for="tagBox">Tags</label>
+							<div id="tagBox"></div>
+						</div>-->
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" id="searchEvent-btn" class="btn btn-primary" role="button"
+							onclick="searchEvent()">Search
+						<i id="search-spinner" hidden="hidden" class="fa fa-spinner fa-spin"></i>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="eventModal">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-body">
+				<div class="img-block" id="inner-img-block">
+					<img id="innerEventPicture" data-src="holder.js/theme=thumb&bg=55595c&fg=eceeef&text=EventPicture"
+						 alt="Card image cap">
+				</div>
+				<div class="inner-text">
+					<span id="innerEventTitle">Title</span>
+					<br>
+					<span id="innerEventDescription">Description</span>
+					<br>
+					<span id="innerEventDestination">Destination</span>
+					<button type="button" id="showMapIntoCard-btn" class="btn btn-outline-info"><i
+							class="glyphicon glyphicon-globe"
+							aria-hidden="true"></i></button>
+					<span hidden="hidden" id="innerPositionX"></span>
+					<span hidden="hidden" id="innerPositionY"></span>
+					<div id="destination-map"></div>
+					<br>
+					<br>
+					<div id="innerEventTagBlock">
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<small id="innerEventStartDate">StartDate</small>
+				<small id="innerEventEndDate"></small>
+				<button onclick="createEventFormKudaGo()" id="create-event-modal-btn" class="btn btn-primary" role="button">Create new event
+					based on it
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!--<div class="modal fade" id="addEventModal">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-body">
+				<div class="img-block">
+					<img id="addEventPicture"
+						 data-src="holder.js/100px225?theme=thumb&bg=55595c&fg=eceeef&text=EventPicture"
+						 alt="Card image cap">
+				</div>
+				<input type="file" th:max="${maxFileSize}" id="addEventPicture-btn" hidden="hidden"
+					   onchange="selectPicture()">
+				<label for="addEventPicture-btn">
+					<span class="addPicture-styled-btn">+</span>
+				</label>
+				<div class="inner-text">
+					<form id="addEventForm">
+						<div class="form-group">
+							<label for="addEventTitle" class="inner-text-event">Title<span class="requirement">*</span></label>
+							<br>
+							<input type="text" class="form-control" id="addEventTitle" maxlength="50"
+								   required="required"/>
+							<div class="invalid-feedback">Check this field</div>
+						</div>
+						<div class="form-group">
+							<label for="addEventDescription">Description</label>
+							<br>
+							<textarea class="form-control" maxlength="200" id="addEventDescription"></textarea>
+						</div>
+						<div class="form-group">
+							<label for="addEventDestination">Destination</label>
+							<br>
+							<textarea class="form-control" maxlength="200" id="addEventDestination"></textarea>
+						</div>
+						<div class="form-group">
+							<label for="addEventStartDate">Start Date<span class="requirement">*</span></label>
+							<br>
+							<input type="datetime-local" class="form-control" required="required" max="2050-01-01T00:00"
+								   id="addEventStartDate"/>
+							<div class="invalid-feedback">Start date cannot be earlier than today or empty</div>
+						</div>
+						<div class="form-group">
+							<label for="addEventEndDate">End Date</label>
+							<br>
+							<input type="datetime-local" class="form-control" max="2050-01-01T00:00"
+								   id="addEventEndDate"/>
+							<div class="invalid-feedback">End date cannot be earlier then start date</div>
+						</div>
+						<div class="form-group">
+							<label for="tagBox">Tags</label>
+							<div id="tagBox"></div>
+						</div>
+					</form>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="submit" id="add-Event-btn" class="btn btn-primary" role="button" onclick="addNewEvent()">
+					OK
+				</button>
+			</div>
+		</div>
+	</div>
+</div>-->
+
+<script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"/>
+</body>
+</html>

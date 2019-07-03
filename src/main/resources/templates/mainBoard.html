@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="">
+	<link th:replace="htmlFragments::header">
+	<title>+1</title>
+	<script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
+	<link href="/css/style.css" rel="stylesheet">
+	<script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+	<script src="/js/vendors/holder.min.js"></script>
+	<script src="/js/mainBoard.js"></script>
+	<script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
+	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"/>
+	<link rel="stylesheet" type="text/css" href="/css/vendors/tag-basic-style.css"/>
+	<script type="text/javascript" src="/js/vendors/tagging.min.js"></script>
+	<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
+</head>
+
+<body>
+<nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+	<a class="navbar-brand col-sm-3 col-md-2 mr-0" id="lable" href="/mainBoard">PlusOne</a>
+	<div class="navbar-main col-md-9 ml-sm-auto col-lg-10 px-4">
+		<div class="row">
+			<div class="userName col-sm" id="user-name-label"
+				 th:text="${#authentication.getPrincipal().getFirstName() + ' ' + #authentication.getPrincipal().getLastName()}"
+				 th:value="${#authentication.getPrincipal().getId()}"></div>
+			<div class="navbar-centerText col-sm">Enjoy your life</div>
+			<a class="navbar-link col-sm" href="/logout">Sign out</a>
+		</div>
+	</div>
+</nav>
+
+<div class="container-fluid">
+	<div class="row">
+		<link th:replace="htmlFragments::leftNavPanel">
+		<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+			<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+				<h1 id='pageTitle'>Invitations</h1>
+				<div class="btn-toolbar mb-2 mb-md-0">
+					<div class="btn-group mr-2">
+						<a class="btn btn-sm btn-outline-secondary" role="button" href="/addEvent">Add new</a>
+					</div>
+					<div class="btn-group">
+						<button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button"
+								data-toggle="dropdown">
+							<span data-feather="calendar"></span>
+							Filter
+						</button>
+						<div class="dropdown-menu">
+							<input type="text" class="calendarFilter" th:id="calendarFilter" name="calendarFilter"/>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="album py-5 bg-light">
+				<div class="container" id="events-board">
+					<div class="row">
+						<div class="col-md-4" th:each="event:${events}">
+							<div class="card mb-4 shadow-sm" th:id="'card-event-' +  ${event.id}"
+								 th:attr="isChatEnabled = ${event.ChatEnabled},
+								 isUserJoined = ${#lists.contains(event.joinedUsers, #authentication.getPrincipal())},
+								 realId = ${event.id}"
+								 th:onclick="'showModal(' + ${event.id} + ')'">
+								<img class="card-img-top" th:id="'event-picture-' + ${event.id}"
+									 th:src="${event.picture!= null} ? ${event.picture}"
+									 data-src="holder.js/100px225?theme=thumb&bg=55595c&fg=eceeef&text=EventPicture"
+									 alt="Card image cap">
+								<div th:if="${event.ownerUser.id == #authentication.getPrincipal().getId()}"
+									 th:value="${event.ownerUser.id}" class="my-icon" th:id="'my-icon-' + ${event.id}"
+									 th:text="My"></div>
+								<div th:if="${#lists.size(event.joinedUsers) + 1} > 1"
+									 th:text="${event.ownerUser.id == #authentication.getPrincipal().getId()} ?
+									 ${#lists.size(event.joinedUsers)} : ${#lists.size(event.joinedUsers) + 1}"
+									 th:id="'follower-amount-' + ${event.id}" class="follower-amount"></div>
+								<div class="card-body">
+									<span class="card-text title" th:id="'event-title-' + ${event.id}"
+										  th:text="${event.title}">Title:</span>
+									<span class="card-text description" hidden="hidden"
+										  th:id="'event-description-' + ${event.id}"
+										  th:text="${event.description}">Short Description:
+									</span>
+									<br>
+									<span class="card-text" th:id="'event-destination-' + ${event.id}"
+										  th:text="${event.destination}">Where: Address</span>
+									<span th:if="${event.destination!=null}" hidden="hidden">
+										<span th:id="'positionX-' + ${event.id}"
+											  th:text="${event.destination.x}"></span>
+										<span th:id="'positionY-' + ${event.id}"
+											  th:text="${event.destination.y}"></span>
+									</span>
+									<div class="d-flex justify-content-between align-items-center">
+										<small class="card-text" th:id="'event-startDate-' + ${event.id}"
+											   th:value="${#temporals.format(event.startDate,'MM.dd.YYYY HH:mm')}"
+											   th:text="${#temporals.format(event.startDate,'dd MMMM yyyy HH:mm')}">
+											When: Date
+										</small>
+										<small class="card-text" th:id="'event-endDate-' + ${event.id}"
+											   th:value="${#temporals.format(event.endDate,'MM.dd.YYYY HH:mm')}"
+											   th:text="${#temporals.format(event.endDate,'dd MMMM yyyy HH:mm')}"></small>
+									</div>
+									<div class="tag-block" th:id="'tag-block-event-' + ${event.id}">
+										<span class="tag" th:each="tag:${event.tags}"
+											  th:id="'tag-event-' + ${event.id} + '-' + ${tag.id}"
+											  th:text="${tag.title}"></span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+		</main>
+	</div>
+</div>
+
+<div class="modal fade" id="eventModal">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-body">
+				<div class="img-block" id="inner-img-block">
+					<img id="innerEventPicture" data-src="holder.js/theme=thumb&bg=55595c&fg=eceeef&text=EventPicture"
+						 alt="Card image cap">
+				</div>
+				<div class="inner-text">
+					<span id="innerEventTitle">Title</span>
+					<br>
+					<span id="innerEventDescription">Description</span>
+					<br>
+					<span id="innerEventDestination">Destination</span>
+					<button type="button" id="showMap-btn" class="btn btn-outline-info"><i
+							class="glyphicon glyphicon-globe"
+							aria-hidden="true"></i></button>
+					<span hidden="hidden" id="innerPositionX"></span>
+					<span hidden="hidden" id="innerPositionY"></span>
+					<div id="destination-map"></div>
+					<br>
+					<div id="innerEventTagBlock">
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<small id="innerEventStartDate"></small>
+				<small id="innerEventEndDate"></small>
+				<button type="submit" id="join-event-modal-btn" class="btn btn-primary" role="button">+1</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!--<div class="modal fade" id="addEventModal">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-body">
+				<div class="img-block">
+					<img id="addEventPicture"
+						 data-src="holder.js/100px225?theme=thumb&bg=55595c&fg=eceeef&text=EventPicture"
+						 alt="Card image cap">
+				</div>
+				<input type="file" th:max="${maxFileSize}" id="addEventPicture-btn" hidden="hidden"
+					   onchange="selectPicture()">
+				<label for="addEventPicture-btn">
+					<span class="addPicture-styled-btn">+</span>
+				</label>
+				<div class="inner-text">
+					<form id="addEventForm">
+						<div class="form-group">
+							<label for="addEventTitle" class="inner-text-event">Title
+								<span class="requirement">*</span>
+							</label>
+							<br>
+							<input type="text" class="form-control" id="addEventTitle" maxlength="50"
+								   required="required"/>
+							<div class="invalid-feedback">Check this field</div>
+						</div>
+						<div class="form-group">
+							<label for="addEventDescription">Description</label>
+							<br>
+							<textarea class="form-control" maxlength="200" id="addEventDescription"></textarea>
+						</div>
+						<div class="form-group">
+							<label for="addEventDestination">Destination<span class="requirement">*</span></label>
+							<br>
+							<input class="form-control" maxlength="200" required="required" id="addEventDestination">
+						</div>
+						<div class="form-group">
+							<label for="addEventStartDate">Start Date<span class="requirement">*</span></label>
+							<br>
+							<input type="datetime-local" class="form-control" required="required" max="2050-01-01T00:00"
+								   id="addEventStartDate"/>
+							<div class="invalid-feedback">Start date cannot be earlier than today or empty</div>
+						</div>
+						<div class="form-group">
+							<label for="addEventEndDate">End Date</label>
+							<br>
+							<input type="datetime-local" class="form-control" max="2050-01-01T00:00"
+								   id="addEventEndDate"/>
+							<div class="invalid-feedback">End date cannot be earlier then start date</div>
+						</div>
+						<div class="form-group">
+							<label for="tagBox">Tags</label>
+							<div id="tagBox"></div>
+						</div>
+					</form>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="submit" id="add-Event-btn" class="btn btn-primary" role="button" onclick="addNewEvent()">
+					OK
+				</button>
+			</div>
+		</div>
+	</div>
+</div>-->
+<div class="modal fade" id="deleteEventModal">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-body">
+				<div class="inner-text">
+					<h4>Are you sure to delete event?</h4>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" id="delete-event-btn" class="btn btn-primary" role="button">Yes</button>
+					<button class="btn btn-primary" data-dismiss="modal" aria-label="Close">No</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>

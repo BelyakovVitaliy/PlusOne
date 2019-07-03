@@ -1,0 +1,19 @@
+.gradientArea {
+    height: 400px;
+    background: rgb(8,42,79);
+    background: linear-gradient(90deg, rgba(8,42,79,1) 0%, rgba(60,122,180,1) 18%, rgba(197,232,241,1) 79%);
+}
+
+.avatar {
+    height: 400px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    width: 340px;
+    margin-left: 2%;
+}
+
+.userAboutText {
+    font-size: 33px;
+    font-style: oblique;
+    word-break: break-all;
+}

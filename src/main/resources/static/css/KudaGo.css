@@ -1,0 +1,23 @@
+#create-event-modal-btn {
+    font-size: smaller;
+    max-width: 22%;
+    padding: 0;
+    white-space: pre-line;
+}
+
+#search-map {
+    height: 500px;
+    position: relative;
+}
+
+#search-map:empty{
+    display: none
+}
+
+#notice:empty{
+    display: none;
+}
+
+.form-group {
+    margin-bottom: 0;
+}

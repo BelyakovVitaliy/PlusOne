@@ -1,0 +1,267 @@
+body {
+    font-size: .875rem;
+}
+
+.feather {
+    width: 16px;
+    height: 16px;
+    vertical-align: text-bottom;
+}
+
+
+[role="main"] {
+    padding-top: 48px; /* Space for fixed navbar */
+}
+
+.d-flex {
+    margin-top: 10px;
+}
+
+.title, #innerEventTitle {
+    font-style: oblique;
+    font-weight: bold;
+}
+
+.modal-body {
+    padding: 0;
+}
+
+.close {
+    position: absolute;
+    right: 20px;
+}
+
+.modal-footer {
+    padding: 3px;
+}
+
+.inner-text {
+    padding: 10px;
+}
+
+.calendarFilter {
+    padding: 0;
+    border: 0;
+}
+
+.my-icon {
+    position: absolute;
+    border: 2px solid #cccccc;
+    border-radius: 40px;
+    padding: 10px;
+    background: #f1f1f1;
+    text-align: center;
+    color: #9c9c9c;
+    margin-top: 5px;
+    margin-left: 5px;
+}
+
+.inner-my-icon {
+    font-size: xx-small;
+    position: absolute;
+    border: 2px solid #cccccc;
+    border-radius: 40px;
+    padding: 10px;
+    background: #f1f1f1;
+    text-align: center;
+    color: #9c9c9c;
+    margin-top: 5px;
+    margin-left: 5px;
+}
+
+.follower-amount {
+    top: 5px;
+    right: 5px;
+    min-width: 45px;
+    position: absolute;
+    border: 2px solid #cccccc;
+    border-radius: 40px;
+    padding: 10px;
+    background: #f1f1f1;
+    text-align: center;
+    color: #9c9c9c;
+}
+
+.requirement {
+    color: red;
+}
+
+/*.addPicture-styled-btn {
+    margin-top: -12%;
+    margin-left: 90%;
+    position: absolute;
+    border: 2px solid #cccccc;
+    border-radius: 40px;
+    background: #f1f1f1;
+    text-align: center;
+    color: #9c9c9c;
+    width: 40px;
+    height: 40px;
+    padding: 6px;
+}*/
+
+.img-block   {
+    text-align: center;
+    background: currentColor;
+}
+
+.card-img-top {
+    max-height: 100vh;
+}
+
+#innerEventPicture {
+    max-width: 100%;
+    max-height: 70vh;
+    vertical-align: middle;
+    margin: auto;
+}
+
+/*#addEventPicture  {
+    max-height: 35vh;
+    max-width: 100%;
+    vertical-align: middle;
+    margin: auto;
+}*/
+
+.card-img-top {
+    max-width: 100%;
+    max-height: 70vh;
+    vertical-align: middle;
+    margin: auto;
+}
+
+.tag-block {
+    max-height: 35px;
+    overflow: hidden;
+}
+
+#innerEventTagBlock {
+    overflow-wrap: break-word;
+}
+
+.inner-follower-amount {
+    min-width: 8%;
+    margin-left: 91%;
+    margin-top: 1%;
+    position: absolute;
+    border: 2px solid #cccccc;
+    border-radius: 40px;
+    padding: 10px;
+    background: #f1f1f1;
+    text-align: center;
+    color: #9c9c9c;
+    font-size: xx-small;
+    cursor: pointer;
+}
+
+#actionList {
+    font-size: xx-small;
+}
+
+#actionListGroup {
+    float: right;
+}
+
+#dropdownsActions {
+    padding: 0;
+    margin: 0;
+    min-width: max-content;
+}
+
+label[for='enable-chat-btn'] {
+    position: relative;
+    float: left;
+    margin-left: 20%;
+}
+
+#enable-chat-btn {
+    margin: 6px 0 0 10px;
+}
+
+#show-del-event-dialog {
+    margin: 5px;
+    width: -webkit-fill-available;
+}
+
+#show-edit-event-form {
+    margin: 5px;
+    width: -webkit-fill-available;
+}
+
+.userName {
+    white-space: nowrap;
+    text-align: left;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    color: white;
+}
+
+#events-board {
+    margin-left: 30px
+}
+
+#dropdowsActions > button {
+    display: block;
+    font-size: xx-small;
+}
+
+/*.inner-text {
+    !*max-height: 50vh;*!
+    overflow:scroll;
+ }*/
+
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+.glyphicon {
+    border: none;
+    background: none;
+}
+
+#destination-map {
+    position: absolute;
+}
+
+.joinedUsers {
+    height: fit-content;
+    max-height: 160px;
+    width: fit-content;
+    margin: 0 12px 18px 12px;
+    position: absolute;
+    background: white;
+    overflow-y: scroll;
+}
+
+.joinedUser {
+    overflow: hidden;
+}
+
+.joinedUserImg img {
+    margin: 7px;
+    float: left;
+    width: 17%;
+}
+
+.userData {
+    padding: 7px;
+    width: 88%;
+}
+
+.userData h5 {
+    font-size: 15px;
+    margin: 0;
+    color: #464646;
+    display: inline;
+}
+
+.userData span {
+    font-size: 13px;
+    float: left;
+}
+
+/*
+.row:not([class="col-md-4"]) {
+    display: none;
+}*/

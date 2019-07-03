@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+	<meta charset="utf-8">
+	<link th:replace="htmlFragments::header">
+	<title>+1</title>
+	<script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
+	<link href="/css/addEditEvent.css" rel="stylesheet">
+	<script src="/js/addEditEvent.js"></script>
+	<link rel="stylesheet" type="text/css" href="/css/vendors/tag-basic-style.css"/>
+	<script type="text/javascript" src="/js/vendors/tagging.min.js"></script>
+	<script src="/js/vendors/holder.min.js"></script>
+</head>
+
+<body>
+<nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+	<a class="navbar-brand col-sm-3 col-md-2 mr-0" id="lable" href="/mainBoard">PlusOne</a>
+	<div class="navbar-main col-md-9 ml-sm-auto col-lg-10 px-4">
+		<div class="row">
+			<div class="userName col-sm" id="user-name-label"
+				 th:text="${#authentication.getPrincipal().getFirstName() + ' ' + #authentication.getPrincipal().getLastName()}"
+				 th:value="${#authentication.getPrincipal().getId()}"></div>
+			<div class="navbar-centerText col-sm">Enjoy your life</div>
+			<a class="navbar-link col-sm" href="/logout">Sign out</a>
+		</div>
+	</div>
+</nav>
+<div class="col-md-9 ml-sm-auto col-lg-10 px-4">
+	<div class="container-fluid">
+		<link th:replace="htmlFragments::leftNavPanel">
+		<div class="container" id="eventDetails" th:attr="eventId=${event.id}">
+			<div class="form-group" id="eventPictureFormGroup">
+				<input type="file" class="form-control-file" th:max="${maxFileSize}" id="eventPicture-btn"
+					   hidden="hidden"
+					   onchange="selectPicture()">
+				<label for="eventPicture-btn">
+					<span class="addPicture-styled-btn">+</span>
+				</label>
+				<div class="img-block">
+					<img id="eventPicture"
+						 data-src="holder.js/100px225?theme=thumb&bg=55595c&fg=eceeef&text=EventPicture"
+						 alt="Card image cap" th:src="${event.picture!= null} ? ${event.picture}">
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="eventTitle">Title<span
+						class="requirement">*</span></label>
+				<br>
+				<input type="text" class="form-control" th:value="${event.title}" id="eventTitle" maxlength="50"
+					   required="required"/>
+				<div class="invalid-feedback">Check this field</div>
+			</div>
+			<div class="form-group">
+				<label for="eventDescription">Description</label>
+				<br>
+				<textarea class="form-control" th:text="${event.description}" maxlength="200"
+						  id="eventDescription"></textarea>
+			</div>
+			<div class="form-group">
+				<label for="eventDestination">Destination<span class="requirement">*</span></label>
+				<br>
+				<input class="form-control" maxlength="150"
+					   th:value="${event.destination!= null} ? ${event.destination.address}"
+					   required="required" id="eventDestination">
+				<div class="invalid-feedback">Destination is required</div>
+				<p id="notice"></p>
+				<span hidden="hidden">
+						<span id="positionX" th:text="${event?.destination?.x}"></span>
+						<span id="positionY" th:text="${event?.destination?.y}"></span>
+					</span>
+				<div id="map"></div>
+			</div>
+			<div class="form-row">
+				<div class="form-group col-md-6">
+					<label for="eventStartDate">Start Date<span class="requirement">*</span></label>
+					<br>
+					<input type="datetime-local" class="form-control" th:value="${event.startDate}"
+						   required="required" max="2050-01-01T00:00"
+						   id="eventStartDate"/>
+				</div>
+				<div class="form-group col-md-6">
+					<label for="eventEndDate">End Date</label>
+					<br>
+					<input type="datetime-local" class="form-control" th:value="${event.endDate}"
+						   max="2050-01-01T00:00" id="eventEndDate"/>
+					<div class="invalid-feedback">End date cannot be earlier then start date</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<div id="tagBox-hidden" hidden="hidden">
+						<span class="tag" th:each="tag:${event.tags}"
+							  th:text="${tag.title}"></span>
+				</div>
+				<label for="tagBox">Tags</label>
+				<div id="tagBox">
+				</div>
+			</div>
+			<input class="btn btn-lg btn-primary btn-block" name="submit" th:onclick="${action}"
+				   type="submit"
+				   value="OK"/>
+		</div>
+	</div>
+</div>
+</body>
+</html>

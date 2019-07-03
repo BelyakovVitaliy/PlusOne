@@ -1,0 +1,32 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8"/>
+	<title>+1</title>
+	<link th:replace="htmlFragments::header">
+	<link rel="stylesheet" href="/css/login.css"/>
+</head>
+<body>
+
+<div class="container">
+
+	<form class="form-signin" name='loginForm' action="/login" method='POST'>
+		<h2 class="form-signin-heading">Please sign in</h2>
+		<input class="form-control" placeholder="Login" type="text" name="username"/>
+		<input class="form-control" placeholder="Password" type="password" name="password"/>
+		<br/>
+		<input class="btn btn-lg btn-primary btn-block" name="submit" type="submit" value="Login"/>
+		<br/>
+		<!--<a class="btn-auth btn-google" href="/login">
+			Sign in with VK
+		</a>-->
+		<a class="btn btn-secondary btn-lg btn-block" href="/registration">Registration</a>
+		<p class="line"><span>Or</span></p>
+	</form>
+	<div class="social-login-btns-group">
+		<a class="btn btn-social-icon btn-vk" href="/signin">
+			<img class="vk-icon" src="/icons/vk-logo.png">
+		</a>
+	</div>
+</div>
+</body>
+</html>
